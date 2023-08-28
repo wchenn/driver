@@ -1,7 +1,19 @@
 from flask import Flask, render_template, request
 from amazon_request import get_departure_time, get_station_code, get_stops, route_ids, data
+import folium
 
 app = Flask(__name__)
+
+
+def create_map():
+    feature_group = folium.FeatureGroup("Locations")
+    m = folium.Map(location =[47.2529, -122.4443], zoom_start = 12)
+    for name, stop_details in all_stats['stops'].items():
+        lat = stop_details['lat']
+        long = stop_details['lng']
+        feature_group.add_child(folium.Marker(location= [lat, long], popup = name))
+    m.add_child(feature_group)
+    m.save('map.html')
 
 @app.route('/', methods = ['GET', 'POST'])
 def dropdown():
@@ -9,9 +21,14 @@ def dropdown():
     if request.method == 'POST':
         str_route = (request.get_data().decode())
         str_route_ess = (str_route[5:49])
+        global all_stats
         all_stats = (data[str_route_ess])
         print(all_stats)
-    return render_template("index.html", datakeys = datakeys, all_stats = all_stats)  
+        create_map()
+        return render_template("index.html", datakeys = datakeys, all_stats = all_stats)  
+
+    return render_template("index.html", datakeys = datakeys)  
+
 
 @app.route('/time')
 def run_get_departure_time():
@@ -36,7 +53,9 @@ def run_get_stops():
 
 
 
-
 if __name__ == '__main__':
     app.run(debug = True)
+    create_map()
     
+
+# datakeys are  the routeID titles,
