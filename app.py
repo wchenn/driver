@@ -7,11 +7,14 @@ app = Flask(__name__)
 
 def create_map():
     feature_group = folium.FeatureGroup("Locations")
-    m = folium.Map(location =[47.2529, -122.4443], zoom_start = 12)
+    # m = folium.Map(location =[47.2529, -122.4443], zoom_start = 12)
     for name, stop_details in all_stats['stops'].items():
         lat = stop_details['lat']
         long = stop_details['lng']
         feature_group.add_child(folium.Marker(location= [lat, long], popup = name))
+    
+    m = folium.Map(location =[lat, long], zoom_start = 13)
+
     m.add_child(feature_group)
     m.save('map.html')
 
@@ -23,7 +26,6 @@ def dropdown():
         str_route_ess = (str_route[5:49])
         global all_stats
         all_stats = (data[str_route_ess])
-        print(all_stats)
         create_map()
         return render_template("index.html", datakeys = datakeys, all_stats = all_stats)  
 

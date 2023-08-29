@@ -73,8 +73,7 @@
 
         <select name= "data" method="GET" action="/">
             {% for data in datakeys[1:] %}
-            <option value= "{{datakeys[0]}}" SELECTED>{{datakeys[0]}}</option>
-            <option value="{{data}}">{{data}}</option>
+              <option value="{{data}}">{{data}}</option>
             {% endfor %}
         </select>
         <input type="submit" value="Get info!" name="submitbutton"/>
@@ -92,7 +91,7 @@
                     <li>{{all_stats}}</li>
                 </ul>
             {% else %}
-                <p>No data available.</p>
+                <p></p>
             {% endif %}
           </div>
         
