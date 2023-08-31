@@ -6,24 +6,25 @@ result = {}
 
 
 def route_ids():
-    datakeys = list(data.keys())[:11]
+    datakeys = list(data.keys())[:10]  #[:10] to limit number of routes we present to 10
     return datakeys
 
 def get_stats(user_key_request):
     return data[user_key_request]
 
 
-def get_station_code(user_key_request):
-    station_code = data[user_key_request]['station_code']
-    return station_code
+# def get_station_code(user_key_request):
+#     station_code = data[user_key_request]['station_code']
+#     return station_code
 
-def get_departure_time(user_key_request):
-    departure_time = data[user_key_request]['departure_time_utc']
-    return departure_time 
+# def get_departure_time(user_key_request):
+#     departure_time = data[user_key_request]['departure_time_utc']
+#     return departure_time 
 
-def get_stops(user_key_request):
-    stops= data[user_key_request]['stops']
-    return stops
+# def get_stops(user_key_request):
+#     stops= data[user_key_request]['stops']
+#     return stops
+
 
 # def get_station_code():
 #     for routeid, info in list(data.items())[:10]:
@@ -57,5 +58,3 @@ def get_stops(user_key_request):
         # result[routeid] = {"Initial":}
         # stop_locations = {}
         # for stops in info[""]
-
-
