@@ -16,7 +16,7 @@ def create_map():
         long = stop_details['lng']
         feature_group.add_child(folium.Marker(location= [lat, long], popup = name))
     
-    m = folium.Map(location =[lat, long], zoom_start = 13)
+    m = folium.Map(location =[lat, long], zoom_start = 14)
 
     m.add_child(feature_group)
     m.save('map.html')
@@ -32,9 +32,11 @@ def dropdown():
         api_key = 'AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
         url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
         place = [] 
+        number_of_stops = len(all_stats['stops'])
         time = 0
         distance = 0
-        counter = 0
+        city_list = []
+        state_list = []
         for destinations in all_stats['stops'].values():
             place.append(str(destinations['lat']) + ", " + str(destinations['lng']) + '|')
 
@@ -45,6 +47,13 @@ def dropdown():
 
             r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
             response_data = r.json()
+            destination_address  = response_data['destination_addresses'][0]
+            cities = destination_address.split(', ')[1]
+            state = destination_address.split(', ')[2].split(' ')[0]
+            if state not in state_list:
+                state_list.append(state)
+            if cities not in city_list:
+                city_list.append(str(cities))
             mile = response_data['rows'][0]['elements'][0]['distance']['text'] # this is for mileage. all mileage is a str.
             if 'ft' in mile:
                 ft_converted = float(mile.split()[0])/5280 #turning ft into miles
@@ -56,14 +65,13 @@ def dropdown():
             formatted_minute = float(minutes.split()[0])
             time += formatted_minute
             hours = time / 60
-            counter += 1
 
         final_distance = str(round(distance, 2)) + " miles"
         final_time = str(round(hours, 2)) + " hours"
 
     
         create_map() #need this here to generate a new map when selecting new location.
-        return render_template("index.html", final_distance = final_distance, final_time = final_time, datakeys = datakeys, all_stats = all_stats, counter = counter)  
+        return render_template("index.html", final_distance = final_distance, final_time = final_time, datakeys = datakeys, all_stats = all_stats['station_code'], number_of_stops = number_of_stops, city_list = city_list, state_list = state_list)  
 
     return render_template("index.html", datakeys = datakeys)  
 

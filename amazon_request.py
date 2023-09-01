@@ -6,7 +6,7 @@ result = {}
 
 
 def route_ids():
-    datakeys = list(data.keys())[:10]  #[:10] to limit number of routes we present to 10
+    datakeys = list(data.keys())[1:11]  #[:10] to limit number of routes we present to 10
     return datakeys
 
 def get_stats(user_key_request):

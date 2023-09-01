@@ -26,23 +26,27 @@
               <option value="{{data}}">{{data}}</option>
             {% endfor %}
         </select>
-        <input type="submit" value="Get info!" name="submitbutton"/>
+        <input type="submit" value="Submit" name="submitbutton"/>
             
         </form>
         
           <div>
-            <iframe src="http://127.0.0.1:5500/map.html" height="500" width="1000" map"></iframe>
+            <center><iframe src="http://127.0.0.1:5500/map.html" height="700" width="1200" align = "center" map"></iframe></center>
           </div>
           <div>
-            
             {% if all_stats %}
+          <center><h1 class="align-center">This route is {{final_distance}} total and takes {{final_time}}.  There are {{number_of_stops}} stops. Route is in these cities: {{city_list}} in {{state_list}}</h1></center>
+            {% endif %}
+          <details>
+            {% if all_stats %}
+              <summary>Station Code: </summary>
                 <ul>
-                    <li>This route is {{final_distance}} and takes {{final_time}}. There are {{counter}} stops</li>
                     <li>{{all_stats}}</li>
                 </ul>
             {% else %}
                 <p></p>
             {% endif %}
+          </details>
           </div>
         
       <!-- Optional JavaScript -->
