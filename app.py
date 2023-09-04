@@ -39,8 +39,6 @@ url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
 
 #     table_name = 'routes'
 #     table = metadata.tables[table_name]
-#     api_key = 'AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
-#     url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
 #     r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
 #     response_data = r.json()
 #     datakeys = route_ids()
@@ -129,8 +127,6 @@ def dropdown():
         str_route_ess = (str_route[5:49])
         global all_stats
         all_stats = (data[str_route_ess])  # all stats are all of the stats of the route selected. 
-        api_key = 'AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
-        url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
         place = [] 
         number_of_stops = len(all_stats['stops'])
         time = 0
