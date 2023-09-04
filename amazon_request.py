@@ -12,7 +12,6 @@ def route_ids():
 def get_stats(user_key_request):
     return data[user_key_request]
 
-
 # def get_station_code(user_key_request):
 #     station_code = data[user_key_request]['station_code']
 #     return station_code

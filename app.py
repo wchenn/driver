@@ -2,15 +2,113 @@ from flask import Flask, render_template, request
 from amazon_request import route_ids, data
 import folium
 import requests
-
+from flask_sqlalchemy import SQLAlchemy
+import json
+import sqlite3
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+db = SQLAlchemy(app)
+# class Routes(db.Model):
+#     id = db.Column(db.Integer, primary_key = True)
+#     routeid = db.Column(db.String(150))
+#     citieslist = db.Column(db.string(150))
 
+#     def __repr__(self):
+#         return f"{self.routeid} - {self.citieslist}"
+
+
+# from sqlalchemy import create_engine, Table, Column, TEXT, MetaData, JSON
+# from sqlalchemy.dialects.postgresql import JSONB, insert
+
+# def sqlstuff():
+#     engine = create_engine('postgresql://postgres:7751@localhost:5432/routes')
+#     metadata = MetaData()
+#     metadata.reflect(bind = engine)
+
+#     routes = Table('routes', metadata,
+#                 Column('id', TEXT , primary_key = True),
+#                 Column('city', JSONB),
+#                 extend_existing= True
+#                 )
+
+#     metadata.create_all(engine)
+
+#     table_name = 'routes'
+#     table = metadata.tables[table_name]
+#     api_key = 'AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
+#     url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
+#     r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
+#     response_data = r.json()
+#     datakeys = route_ids()
+#     for i in range(len(datakeys)):
+#         curr_route = datakeys[i]
+#         inserting_route = insert(routes).values(id = curr_route)
+#         conn = engine.connect()
+#         conn.execute(inserting_route)
+#         conn.commit()
+#     print(table.__repr__())
+
+
+
+def populate_drop():
+    other_drop =[]
+    datakeys = route_ids() #datakeys is a list
+    api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
+    url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
+    conn = sqlite3.connect("city.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS routes( routeid TEXT, cities TEXT)''')
+    cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', (datakeys))
+    conn.commit()
+    conn.close()
+    singlecitywithstops = []
+    citylist = []
+    source = ''
+    destination = ''
+    r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
+
+    json_data = r.json()
+    
+    
+    for i in range(len(datakeys)):
+        datakeys = route_ids()
+        curr_route = datakeys[i]
+        # cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', tuple(datakeys[i]))
+        # conn.commit()
+        # conn.close()
+        stat = data[curr_route]
+        for destinations in stat['stops'].values():
+            singlecitywithstops.append(str(destinations['lat']) + ", " +str(destinations['lng']) +"|")
+        for i in range(0, len(singlecitywithstops) -2, 2):
+            source = singlecitywithstops[i]
+            destination = singlecitywithstops[i+2]
+            r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
+            json_data = r.json()
+            result = json_data
+            # result = json_data['destination_addresses'][0].split(", ")[1]
+            print(result)
+            # if result not in citylist:
+            #     has_number = any(char.isnumeric() for char in result)
+            #     if not has_number:
+            #         citylist.append(result)
+    # print(citylist)
+
+        # for i in range(0, len(place) -2 , 2 ):
+        #     source = place[i]
+        #     destination = place [i+2]
+
+        #     r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
+        #     response_data = r.json()
+
+#             destination_address  = response_data['destination_addresses'][0]
+#             cities = destination_address.split(', ')[1]
+# thinking about making a dropdown with all the cities, chooose and select and will return routes that include that city
 
 
 
 def create_map():
     feature_group = folium.FeatureGroup("Locations")
-    # m = folium.Map(location =[47.2529, -122.4443], zoom_start = 12)
     for name, stop_details in all_stats['stops'].items():
         lat = stop_details['lat']
         long = stop_details['lng']
@@ -22,7 +120,7 @@ def create_map():
     m.save('map.html')
 
 @app.route('/', methods = ['GET', 'POST'])
-def dropdown():
+def dropdown():   
     datakeys = route_ids()
     if request.method == 'POST':
         str_route = (request.get_data().decode())
@@ -71,7 +169,7 @@ def dropdown():
 
     
         create_map() #need this here to generate a new map when selecting new location.
-        return render_template("index.html", final_distance = final_distance, final_time = final_time, datakeys = datakeys, all_stats = all_stats['station_code'], number_of_stops = number_of_stops, city_list = city_list, state_list = state_list)  
+        return render_template("index.html", final_distance = final_distance, final_time = final_time, datakeys = datakeys, all_stats = all_stats['station_code'], number_of_stops = number_of_stops, city_list = city_list, state_list = state_list, str_route_ess = str_route_ess)  
 
     return render_template("index.html", datakeys = datakeys)  
 
@@ -79,8 +177,11 @@ def dropdown():
 
 
 if __name__ == '__main__':
-    app.run(debug = True)
-    create_map()
+    # sqlstuff()
+    populate_drop()
+
+    # app.run(debug = True)
+    # create_map()
     
 
 # datakeys are  the routeID titles
