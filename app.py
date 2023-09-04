@@ -10,7 +10,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
 api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
 url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
-
+conn = sqlite3.connect("city.db")
+cursor = conn.cursor()
 
 # class Routes(db.Model):
 #     id = db.Column(db.Integer, primary_key = True)
@@ -55,8 +56,6 @@ url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
 def populate_drop():
     other_drop =[]
     datakeys = route_ids() #datakeys is a list
-    conn = sqlite3.connect("city.db")
-    cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS routes( routeid TEXT, cities TEXT)''')
     cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', (datakeys))
@@ -64,8 +63,8 @@ def populate_drop():
     conn.close()
     singlecitywithstops = []
     citylist = []
-    source = ''
-    destination = ''
+    source = ""
+    destination = ""
     r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
 
     json_data = r.json()
