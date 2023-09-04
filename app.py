@@ -8,6 +8,10 @@ import sqlite3
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
+api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
+url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
+
+
 # class Routes(db.Model):
 #     id = db.Column(db.Integer, primary_key = True)
 #     routeid = db.Column(db.String(150))
@@ -53,8 +57,6 @@ db = SQLAlchemy(app)
 def populate_drop():
     other_drop =[]
     datakeys = route_ids() #datakeys is a list
-    api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
-    url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
     conn = sqlite3.connect("city.db")
     cursor = conn.cursor()
     cursor.execute('''
