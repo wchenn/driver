@@ -13,6 +13,16 @@ url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
 conn = sqlite3.connect("city.db")
 cursor = conn.cursor()
 r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
+datakeys = route_ids() #datakeys is a list
+singlecitywithstops = []    
+citylist = []
+state_list = []
+place = [] 
+str_route = (request.get_data().decode())
+str_route_ess = (str_route[5:49])
+all_stats = (data[str_route_ess]) 
+json_data = r.json()
+
 
 # class Routes(db.Model):
 #     id = db.Column(db.Integer, primary_key = True)
@@ -56,34 +66,26 @@ r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
 
 def populate_drop():
     other_drop =[]
-    datakeys = route_ids() #datakeys is a list
     # cursor.execute('''
     #     CREATE TABLE IF NOT EXISTS routes( routeid TEXT, cities TEXT)''')
     # cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', (datakeys))
     conn.commit()
     conn.close()
-    singlecitywithstops = []
-    citylist = []
-
-    json_data = r.json()
-    
     
     for i in range(len(datakeys)):
         datakeys = route_ids()
         curr_route = datakeys[i]
         # cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', tuple(datakeys[i]))
-        # conn.commit()
-        # conn.close()
+
         stat = data[curr_route]
         for destinations in stat['stops'].values():
             singlecitywithstops.append(str(destinations['lat']) + ", " +str(destinations['lng']) +"|")
         for i in range(0, len(singlecitywithstops) -2, 2):
             source = singlecitywithstops[i]
             destination = singlecitywithstops[i+2]
-            json_data = r.json()
-            result = json_data
+        conn.commit()
+        conn.close()
             # result = json_data['destination_addresses'][0].split(", ")[1]
-            print(result)
             # if result not in citylist:
             #     has_number = any(char.isnumeric() for char in result)
             #     if not has_number:
@@ -119,16 +121,13 @@ def create_map():
 def dropdown():   
     datakeys = route_ids()
     if request.method == 'POST':
-        str_route = (request.get_data().decode())
-        str_route_ess = (str_route[5:49])
-        global all_stats
-        all_stats = (data[str_route_ess])  # all stats are all of the stats of the route selected. 
-        place = [] 
+        # str_route = (request.get_data().decode())
+        # str_route_ess = (str_route[5:49])
+        # global all_stats
+        # all_stats = (data[str_route_ess])  # all stats are all of the stats of the route selected. 
         number_of_stops = len(all_stats['stops'])
         time = 0
         distance = 0
-        city_list = []
-        state_list = []
         for destinations in all_stats['stops'].values():
             place.append(str(destinations['lat']) + ", " + str(destinations['lng']) + '|')
 
