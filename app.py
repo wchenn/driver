@@ -1,16 +1,14 @@
 from flask import Flask, render_template, request
-from amazon_request import route_ids, data
+from amazon_request import route_ids, data, r
 import folium
-import requests
 from flask_sqlalchemy import SQLAlchemy
-import json
 import sqlite3
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
+
 conn = sqlite3.connect("city.db")
 cursor = conn.cursor()
-r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
 datakeys = route_ids() #datakeys is a list
 singlecitywithstops = []    
 city_list = []
