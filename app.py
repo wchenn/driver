@@ -60,22 +60,21 @@ def dropdown():
         for i in range(0, len(place) -2 , 2 ):
             source = place[i]
             destination = place [i+2]
-            response_data = r.json()
-            destination_address  = response_data['destination_addresses'][0]
+            destination_address  = json_data['destination_addresses'][0]
             cities = destination_address.split(', ')[1]
             state = destination_address.split(', ')[2].split(' ')[0]
             if state not in state_list:
                 state_list.append(state)
             if cities not in city_list:
                 city_list.append(str(cities))
-            mile = response_data['rows'][0]['elements'][0]['distance']['text'] # this is for mileage. all mileage is a str.
+            mile = json_data['rows'][0]['elements'][0]['distance']['text'] # this is for mileage. all mileage is a str.
             if 'ft' in mile:
                 ft_converted = float(mile.split()[0])/5280 #turning ft into miles
                 distance += ft_converted
             else:
                 mi_converted = float(mile.split()[0])
                 distance += mi_converted
-            minutes = response_data['rows'][0]['elements'][0]['duration']['text']#this is for time
+            minutes = json_data['rows'][0]['elements'][0]['duration']['text']#this is for time
             formatted_minute = float(minutes.split()[0])
             time += formatted_minute
             hours = time / 60
