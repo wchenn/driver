@@ -22,62 +22,15 @@ str_route = (request.get_data().decode())
 str_route_ess = (str_route[5:49])
 all_stats = (data[str_route_ess]) 
 json_data = r.json()
-
-
-# class Routes(db.Model):
-#     id = db.Column(db.Integer, primary_key = True)
-#     routeid = db.Column(db.String(150))
-#     citieslist = db.Column(db.string(150))
-
-#     def __repr__(self):
-#         return f"{self.routeid} - {self.citieslist}"
-
-
-# from sqlalchemy import create_engine, Table, Column, TEXT, MetaData, JSON
-# from sqlalchemy.dialects.postgresql import JSONB, insert
-
-# def sqlstuff():
-#     engine = create_engine('postgresql://postgres:7751@localhost:5432/routes')
-#     metadata = MetaData()
-#     metadata.reflect(bind = engine)
-
-#     routes = Table('routes', metadata,
-#                 Column('id', TEXT , primary_key = True),
-#                 Column('city', JSONB),
-#                 extend_existing= True
-#                 )
-
-#     metadata.create_all(engine)
-
-#     table_name = 'routes'
-#     table = metadata.tables[table_name]
-#     r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
-#     response_data = r.json()
-#     datakeys = route_ids()
-#     for i in range(len(datakeys)):
-#         curr_route = datakeys[i]
-#         inserting_route = insert(routes).values(id = curr_route)
-#         conn = engine.connect()
-#         conn.execute(inserting_route)
-#         conn.commit()
-#     print(table.__repr__())
+stat = data[curr_route] #used to pull from the s3
 
 
 
 def populate_drop():
-    other_drop =[]
-    # cursor.execute('''
-    #     CREATE TABLE IF NOT EXISTS routes( routeid TEXT, cities TEXT)''')
-    # cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', (datakeys))
-    conn.commit()
-    conn.close()
-    
+  
     for i in range(len(datakeys)):
         datakeys = route_ids()
         curr_route = datakeys[i]
-        # cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', tuple(datakeys[i]))
-
-        stat = data[curr_route]
         for destinations in stat['stops'].values():
             singlecitywithstops.append(str(destinations['lat']) + ", " +str(destinations['lng']) +"|")
         for i in range(0, len(singlecitywithstops) -2, 2):
@@ -85,25 +38,7 @@ def populate_drop():
             destination = singlecitywithstops[i+2]
         conn.commit()
         conn.close()
-            # result = json_data['destination_addresses'][0].split(", ")[1]
-            # if result not in citylist:
-            #     has_number = any(char.isnumeric() for char in result)
-            #     if not has_number:
-            #         citylist.append(result)
-    # print(citylist)
-
-        # for i in range(0, len(place) -2 , 2 ):
-        #     source = place[i]
-        #     destination = place [i+2]
-
-        #     r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
-        #     response_data = r.json()
-
-#             destination_address  = response_data['destination_addresses'][0]
-#             cities = destination_address.split(', ')[1]
-# thinking about making a dropdown with all the cities, chooose and select and will return routes that include that city
-
-
+           
 
 def create_map():
     feature_group = folium.FeatureGroup("Locations")
@@ -117,14 +52,9 @@ def create_map():
     m.add_child(feature_group)
     m.save('map.html')
 
-@app.route('/', methods = ['GET', 'POST'])
+@app.route('/', methods = ['POST'])
 def dropdown():   
-    datakeys = route_ids()
     if request.method == 'POST':
-        # str_route = (request.get_data().decode())
-        # str_route_ess = (str_route[5:49])
-        # global all_stats
-        # all_stats = (data[str_route_ess])  # all stats are all of the stats of the route selected. 
         number_of_stops = len(all_stats['stops'])
         time = 0
         distance = 0
