@@ -8,8 +8,6 @@ import sqlite3
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
-api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
-url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
 conn = sqlite3.connect("city.db")
 cursor = conn.cursor()
 r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
