@@ -12,6 +12,7 @@ api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
 url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
 conn = sqlite3.connect("city.db")
 cursor = conn.cursor()
+r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
 
 # class Routes(db.Model):
 #     id = db.Column(db.Integer, primary_key = True)
@@ -56,16 +57,13 @@ cursor = conn.cursor()
 def populate_drop():
     other_drop =[]
     datakeys = route_ids() #datakeys is a list
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS routes( routeid TEXT, cities TEXT)''')
-    cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', (datakeys))
+    # cursor.execute('''
+    #     CREATE TABLE IF NOT EXISTS routes( routeid TEXT, cities TEXT)''')
+    # cursor.execute('''INSERT INTO routes (routeid, cities) VALUES (?, ?)''', (datakeys))
     conn.commit()
     conn.close()
     singlecitywithstops = []
     citylist = []
-    source = ""
-    destination = ""
-    r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
 
     json_data = r.json()
     
@@ -82,7 +80,6 @@ def populate_drop():
         for i in range(0, len(singlecitywithstops) -2, 2):
             source = singlecitywithstops[i]
             destination = singlecitywithstops[i+2]
-            r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
             json_data = r.json()
             result = json_data
             # result = json_data['destination_addresses'][0].split(", ")[1]
