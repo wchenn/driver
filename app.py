@@ -15,7 +15,7 @@ cursor = conn.cursor()
 r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
 datakeys = route_ids() #datakeys is a list
 singlecitywithstops = []    
-citylist = []
+city_list = []
 state_list = []
 place = [] 
 str_route = (request.get_data().decode())
@@ -29,7 +29,6 @@ stat = data[curr_route] #used to pull from the s3
 def populate_drop():
   
     for i in range(len(datakeys)):
-        datakeys = route_ids()
         curr_route = datakeys[i]
         for destinations in stat['stops'].values():
             singlecitywithstops.append(str(destinations['lat']) + ", " +str(destinations['lng']) +"|")
@@ -65,8 +64,6 @@ def dropdown():
         for i in range(0, len(place) -2 , 2 ):
             source = place[i]
             destination = place [i+2]
-
-            r = requests.get(url+ "origins=" + source + "&destinations=" + destination + "&key=" + api_key)
             response_data = r.json()
             destination_address  = response_data['destination_addresses'][0]
             cities = destination_address.split(', ')[1]
