@@ -4,10 +4,6 @@ response = requests.get('https://s3.us-west-2.amazonaws.com/amazon-last-mile-cha
 
 
 
-#google api
-api_key = "AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U"
-url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&"
-r = requests.get(url+ "origins=" + "&destinations="  + "&key=" + api_key)
 
 
 
@@ -21,3 +17,4 @@ def route_ids():
 
 def get_stats(user_key_request):
     return data[user_key_request]
+

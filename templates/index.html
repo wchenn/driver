@@ -1,8 +1,5 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-
 <!DOCTYPE html>
-
   </nav>
   <html lang="en">
     <head>
@@ -18,27 +15,20 @@
             <title>Dropdown</title>
         </head>
     <body>
-        <form method="POST" action="/">
+      <form method="POST" action="/">
 
         <select name= "data" method="GET" action="/">
             <option value="" selected disabled>Filter by route</option>
               {% for data in datakeys %}
-                <option value="{{data}}">{{data}}</option>
+                <option value="{{ data }}" {% if data == selected_route %}selected{% endif %}>{{ data }}</option>
               {% endfor %}
         </select> 
         <input type="submit" value="Submit" name="submitbutton"/>
         </form>
 
-            <title>Dropdown 2</title> 
-        <form method="POST" action="/">
-
-          <select name= "data" method="GET" action="/">
-              <option value="" selected disabled>Filter by city</option>
-                {% for cities in otherdatakeys %}
-                  <option value="{{cities}}">{{cities}}</option>
-                {% endfor %}
-          </select> 
-          <input type="submit" value="Submit" name="othersubmitbutton"/>
+        <form action="/city" method="GET">
+          <button type="submit">Search Routes by City</button>
+     
 
 
             
@@ -48,8 +38,8 @@
             <center><iframe src="http://127.0.0.1:5500/map.html" height="700" width="1200" align = "center" map"></iframe></center>
           </div>
           <div>
-            {% if all_stats %}
-          <center><h1 class="align-center">{{str_route_ess}} is {{final_distance}} total and takes {{final_time}}.  There are {{number_of_stops}} stops. Route is in these cities: {{city_list}} in {{state_list}}</h1></center>
+            {% if str_route_ess %}
+          <center><h1 class="align-center">{{str_route_ess}} is {{final_distance}} total and takes {{final_time}}.  There are {{number_of_stops}} stops.</h1></center>
             {% endif %}
           <details>
             {% if all_stats %}
@@ -61,6 +51,15 @@
                 <p></p>
             {% endif %}
           </details>
+          {% if data %}
+          <summary>data: </summary>
+            {% for trips in data %}
+            <li>{{trips}}</li>
+            {% endfor %}
+
+          {% endif %}
+
+
           </div>
         
       <!-- Optional JavaScript -->
