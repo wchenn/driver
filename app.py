@@ -22,7 +22,6 @@ destination_lat = None
 destination_lng = None
 stop_lat = None
 stop_lng = None
-# url = f'https://maps.googleapis.com/maps/api/distancematrix/json?destinations={destination_lat},{destination_lng}&origins={stop_lat},{stop_lng}&units=imperial&key={api_key}'
 url = config['api_info']['base_url']
 conn = sqlite3.connect("route.db")
 c = conn.cursor()
@@ -156,36 +155,6 @@ def dropdown():
         db.session.commit()
 
 
-        # all_stats = (data[str_route_ess])
-        # number_of_stops = len(all_stats['stops'])
-        # time = 0
-        # distance = 0
-        # for destinations in all_stats['stops'].values():
-        #     place.append(str(destinations['lat']) + ", " + str(destinations['lng']) )
-        # for i in range(0, len(place) -2 , 2 ):
-        #     source = place[i]
-        #     source_lat, source_lng = map(float, source.split(', '))
-        #     destination = place [i+2]
-        #     destination_lat, destination_lng = map(float, destination.split(', '))
-
-        #     url = plugging_it_in(destination_lat, destination_lng, source_lat , source_lng )
-        #     r = requests.get(url)
-        #     json_data = r.json()
-        #     destination_address  = json_data['destination_addresses'][0]
-    
-        #     mile = json_data['rows'][0]['elements'][0]['distance']['text'] # this is for mileage. all mileage is a str.
-        #     if 'ft' in mile:
-        #         ft_converted = float(str(mile.split()).replace(',', '')[0])/5280 #turning ft into miles
-        #         distance += ft_converted
-        #     else:
-        #         mi_converted = float(str(mile.split())[0])
-        #         distance += mi_converted
-        #     minutes = json_data['rows'][0]['elements'][0]['duration']['text']#this is for time
-        #     formatted_minute = float(minutes.split()[0])
-        #     time += formatted_minute
-        #     hours = time / 60
-        # final_distance = str(round(distance, 2)) + " miles"
-        # final_time = str(round(hours, 2)) + " hours"
 
         create_map(str_route_ess) #need this here to generate a new map when selecting new location.
 
