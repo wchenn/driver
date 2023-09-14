@@ -5,17 +5,16 @@ import folium
 from flask_sqlalchemy import SQLAlchemy
 import sqlite3
 import configparser
-from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, Text, REAL, Sequence, Float, distinct
+from sqlalchemy import create_engine, Column, Text, REAL, Sequence, Float, distinct
 from sqlalchemy.orm import sessionmaker 
 from sqlalchemy.ext.declarative import declarative_base
 engine = create_engine('sqlite:///route.db', echo = True)
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///route.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
 Session = sessionmaker(bind = engine)
 session = Session()
-
 config = configparser.ConfigParser()
 config.read("config.ini")
 api_key = config['api_info']["api_key"]
@@ -23,9 +22,8 @@ destination_lat = None
 destination_lng = None
 stop_lat = None
 stop_lng = None
-api_key = 'AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
-url = 'https://maps.googleapis.com/maps/api/distancematrix/json?destinations={destination_lat},{destination_lng}&origins={stop_lat},{stop_lng}&units=imperial&key=AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
-# url = config['api_info']['url']
+# url = f'https://maps.googleapis.com/maps/api/distancematrix/json?destinations={destination_lat},{destination_lng}&origins={stop_lat},{stop_lng}&units=imperial&key={api_key}'
+url = config['api_info']['base_url']
 conn = sqlite3.connect("route.db")
 c = conn.cursor()
 datakeys = route_ids() #datakeys is a list
@@ -34,15 +32,13 @@ city_list = []
 state_list = []
 place = [] 
 all_stats = None
-# stat = data[curr_route] #used to pull from the s3
-
 r = requests.get(url)
 json_data = r.json()
 
 
 
-def plugging_it_in(destination_lat, destination_lng, stop_lat, stop_lng):
-    url = f'https://maps.googleapis.com/maps/api/distancematrix/json?destinations={destination_lat},{destination_lng}&origins={stop_lat},{stop_lng}&units=imperial&key=AIzaSyDYt_0UslO8mFS6GqNm0Zx9v9liGj6Oa6U'
+def plugging_it_in(destination_lat, destination_lng, stop_lat, stop_lng, api_key):
+    url = f'https://maps.googleapis.com/maps/api/distancematrix/json?destinations={destination_lat},{destination_lng}&origins={stop_lat},{stop_lng}&units=imperial&key={api_key}'
     return url
 
 
@@ -109,7 +105,6 @@ def insert_google():
         conn.commit()
         
     c.close()
-    print('Complete')
 
 
 def create_map(name_of_route):
@@ -142,7 +137,7 @@ def dropdown():
             source_lng = coordinates[i].stop_lng
             destination_lat = coordinates[i + 1].stop_lat
             destination_lng = coordinates[i + 1].stop_lng
-            response = requests.get(plugging_it_in(destination_lat, destination_lng, source_lat, source_lng))
+            response = requests.get(plugging_it_in(destination_lat, destination_lng, source_lat, source_lng, api_key))
             data = response.json()
             distance = data["rows"][0]["elements"][0]["distance"]["text"]
             time = data["rows"][0]['elements'][0]["duration"]['text']
@@ -201,16 +196,19 @@ def dropdown():
 @app.route('/city', methods = ['POST', 'GET'])
 def search_by_city():
     cities = grab_cities()
+    selected_city_full = None
     getting_routes = None
+    route_result = []
+    
     if request.method == "POST":
         selected_city_full = request.form.get('city')
         getting_routes = session.query(table).filter_by(city = selected_city_full).distinct().all()
-        route_ids = [result[0] for result in getting_routes]
-        session.close()
-        
-        return render_template("city.html", cities = cities, routes = getting_routes)
-    # filtered_routes = 
-    return render_template("city.html", cities = cities, routes = getting_routes)
+        for route in getting_routes:
+            if route.route_id not in route_result:
+                route_result.append(str(route.route_id))
+        print(api_key)
+        return render_template("city.html", cities = cities, city_in_question = selected_city_full, routes = route_result)
+    return render_template("city.html", cities = cities, city_in_question = selected_city_full, routes = route_result)
 
 
 if __name__ == '__main__':

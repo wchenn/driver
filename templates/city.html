@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Search by City</title>
 </head>
 <body>
-    <button class="btn"><i class="home"></i><a href="/">Home</a>
-    </button>
+    <button class="btn"><i class="home"></i><a href="/">Home</a></button>
 
     <form method="POST" action="/city">
         <select name="city">
@@ -13,17 +12,12 @@
             {% for city in cities %}
                 <option value="{{ city }}">{{ city }}</option>
             {% endfor %}
-            {% if routes %}
-            <ul>
-                {% for route in routes %}
-                    <li>{{ route }}</li>
-                {% endfor %}
-            </ul>
-            <center><h1 class="align-center">Routes that include this city are {{routes}}.</h1></center>
-            {% endif %}
-
         </select>
         <input type="submit" value="Search Routes">
     </form>
+
+    {% if routes %}
+    <center><h1 class="align-center">Routes that include {{city_in_question}} are {{routes}}.</h1></center>
+    {% endif %}
 </body>
 </html>

@@ -41,23 +41,7 @@
             {% if str_route_ess %}
           <center><h1 class="align-center">{{str_route_ess}} is {{final_distance}} total and takes {{final_time}}.  There are {{number_of_stops}} stops.</h1></center>
             {% endif %}
-          <details>
-            {% if all_stats %}
-              <summary>Station Code: </summary>
-                <ul>
-                    <li>{{all_stats}}</li>
-                </ul>
-            {% else %}
-                <p></p>
-            {% endif %}
-          </details>
-          {% if data %}
-          <summary>data: </summary>
-            {% for trips in data %}
-            <li>{{trips}}</li>
-            {% endfor %}
-
-          {% endif %}
+    
 
 
           </div>
